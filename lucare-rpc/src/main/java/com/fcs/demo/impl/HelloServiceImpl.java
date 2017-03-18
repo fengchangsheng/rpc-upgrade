@@ -9,6 +9,7 @@ public class HelloServiceImpl implements HelloService {
 
     @Override
     public void sayHello(String name) {
+//        System.out.println(1/0);//试试异常如何处理
         System.out.println("hello," + name);
     }
 }

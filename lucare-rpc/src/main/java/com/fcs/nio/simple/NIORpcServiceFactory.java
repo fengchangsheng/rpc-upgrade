@@ -19,7 +19,7 @@ public class NIORpcServiceFactory {
         return (T) Proxy.newProxyInstance(api.getClassLoader(), new Class<?>[]{api}, new NIORemotingServiceProxy());
     }
 
-    public static void putService(final Object service, int port) throws ClassNotFoundException, NoSuchMethodException {
+    public static void expose(final Object service, int port) throws ClassNotFoundException, NoSuchMethodException {
         try {
             Handler handler = new ServerHandler(service);
             Selector selector = Selector.open(); // 打开选择器

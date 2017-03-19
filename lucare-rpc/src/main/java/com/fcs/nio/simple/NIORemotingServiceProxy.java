@@ -27,7 +27,7 @@ public class NIORemotingServiceProxy implements InvocationHandler {
             byteBuffer.clear();
             int readBytes = socketChannel.read(byteBuffer);
             if (readBytes > 0) {
-                byteBuffer.flip();
+//                byteBuffer.flip();
                 object = ByteUtil.getObject(byteBuffer.array());
                 System.out.println("Client: data = " + object);
                 socketChannel.close();

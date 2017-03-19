@@ -12,9 +12,9 @@ public class ProductServiceTest {
 
     public static void main(String[] args) {
         HelloService helloService = new HelloServiceImpl();
-//        RpcServiceFactory.putService(helloService,1234);
+        RpcServiceFactory.expose(helloService,1234);
         try {
-            NIORpcServiceFactory.putService(helloService, 1234);
+            NIORpcServiceFactory.expose(helloService, 1234);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {

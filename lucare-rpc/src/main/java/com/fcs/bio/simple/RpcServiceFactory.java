@@ -16,10 +16,11 @@ import java.net.Socket;
 public class RpcServiceFactory {
 
     public static <T> T getservice(Class<T> api) {
+
         return (T) Proxy.newProxyInstance(api.getClassLoader(), new Class<?>[]{api}, new RemotingServiceProxy());
     }
 
-    public static void putService(final Object service, int port) {
+    public static void expose(final Object service, int port) {
         try {
             final Class clazz = service.getClass();
             ServerSocket serverSocket = new ServerSocket(port);

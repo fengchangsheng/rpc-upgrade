@@ -1,10 +1,7 @@
 package com.fcs.netty;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.util.CharsetUtil;
-import io.netty.util.ReferenceCountUtil;
 
 
 /**
@@ -21,16 +18,8 @@ public class ServerHandler extends ChannelInboundHandlerAdapter{
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         // Discard the received data silently.
         System.out.println("server read start..");
-        ByteBuf in = (ByteBuf) msg;
-        System.out.println("server received : "+ in.toString(CharsetUtil.UTF_8));
-        try {
-            while (in.isReadable()) { // (1)
-                System.out.print((char) in.readByte());
-                System.out.flush();
-            }
-        } finally {
-            ReferenceCountUtil.release(msg); // (2)
-        }
+        User user = (User) msg;
+        System.out.println(user.getName() + " is "+ user.getAge() + " years old." );
     }
 
     @Override

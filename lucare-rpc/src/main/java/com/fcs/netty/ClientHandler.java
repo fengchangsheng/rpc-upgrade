@@ -1,21 +1,20 @@
 package com.fcs.netty;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.util.CharsetUtil;
 
 /**
  * Created by Lucare.Feng on 2017/3/19.
  */
-public class ClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
+public class ClientHandler extends SimpleChannelInboundHandler<User> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         System.out.println("connect has establish");
-//        ctx.writeAndFlush("Netty ");
-        ctx.writeAndFlush(Unpooled.copiedBuffer("Netty",CharsetUtil.UTF_8));
+        User user = new User("lucare",24);
+        ctx.write(user);
+        ctx.flush();
+
     }
 
     @Override
@@ -25,7 +24,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf) throws Exception {
-        System.out.println("client received :"+ byteBuf.toString(CharsetUtil.UTF_8));
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, User user) throws Exception {
+        System.out.println("client received :"+ user.getName());
     }
 }

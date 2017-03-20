@@ -8,6 +8,9 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.serialization.ClassResolvers;
+import io.netty.handler.codec.serialization.ObjectDecoder;
+import io.netty.handler.codec.serialization.ObjectEncoder;
 
 /**
  * Created by Lucare.Feng on 2017/3/19.
@@ -30,6 +33,9 @@ public class EchoServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() { // (4)
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
+                            ch.pipeline().addLast(new ObjectDecoder(1024 * 1024,
+                                    ClassResolvers.weakCachingResolver(this.getClass().getClassLoader())));
+                            ch.pipeline().addLast(new ObjectEncoder());
                             ch.pipeline().addLast(new ServerHandler());
                         }
                     })

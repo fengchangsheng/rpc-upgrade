@@ -28,6 +28,13 @@
             <version>4.1.5.Final</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.jboss.marshalling/jboss-marshalling-serial -->
+        <dependency>
+            <groupId>org.jboss.marshalling</groupId>
+            <artifactId>jboss-marshalling-serial</artifactId>
+            <version>1.4.11.Final</version>
+        </dependency>
+
     </dependencies>
 
     <build>

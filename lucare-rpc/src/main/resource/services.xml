@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services>
+	<!--<listener>cn.pxzs.train.user.common.UserAppContextListener</listener>-->
+
+	<!--<filters name="UserRPCInvokeFilter">-->
+		<!--<class>cn.pxzs.train.user.common.UserRPCInvokeFilter</class>-->
+	<!--</filters>-->
+
+	<service name="HelloService">
+		<home-api>com.fcs.demo.HelloService</home-api>
+		<home-class>com.fcs.demo.impl.HelloServiceImpl</home-class>
+	</service>
+
+</services>

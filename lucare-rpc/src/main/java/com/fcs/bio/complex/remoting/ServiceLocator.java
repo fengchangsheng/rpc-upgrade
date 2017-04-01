@@ -5,44 +5,20 @@ import java.lang.reflect.Proxy;
 
 public class ServiceLocator<T> {
 	
-	/**
-	 * 
-	 */
 	private Class<T> api ;
 	
-	/**
-	 * 
-	 */
 	private String serviceName ;
 
-	/**
-	 * 
-	 */
 	private String host ;
-	
-	/**
-	 * 
-	 */
+
 	private int port ;
-	
-	/**
-	 * 
-	 */
+
 	private String appName ;
 	
-	/**
-	 * 
-	 */
 	private int connectTimeout = 1000 ;
 	
-	/**
-	 * 
-	 */
 	private int readTimeout = 1000 ;
-	
-	/**
-	 * 
-	 */
+
 	private Object proxy ;
 
 	public ServiceLocator(Class<T> api, String serviceName, String host, int port, String appName) throws IOException, InterruptedException {
@@ -118,11 +94,9 @@ public class ServiceLocator<T> {
 		this.appName = appName;
 	}
 
-
 	public Object getProxy() {
 		return proxy;
 	}
-
 
 	@Override
 	public String toString() {

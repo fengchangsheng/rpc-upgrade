@@ -5,6 +5,6 @@ package com.fcs.demo;
  */
 public interface HelloService {
 
-    void sayHello(String name);
+    String sayHello(String name);
 
 }

@@ -14,6 +14,7 @@ public class RPCHolder {
     private Object[] args;
 //    private int status = InvokeMarker.STATUS_SUCCESS ;
     private Class<?> returnType;
+    private Class<?>[] parameterTypes;
     private Object result;
     private String cause;
     private long createTime;
@@ -105,5 +106,13 @@ public class RPCHolder {
 
     public void setContent(byte[] content) {
         this.content = content;
+    }
+
+    public void setParameterTypes(Class<?>[] parameterTypes) {
+        this.parameterTypes = parameterTypes;
+    }
+
+    public Class<?>[] getParameterTypes() {
+        return parameterTypes;
     }
 }

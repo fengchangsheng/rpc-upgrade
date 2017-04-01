@@ -34,7 +34,7 @@ public class ProcessprThread implements Runnable {
             String methodName = inputStream.readUTF();
             Class<?>[] paramTypes = (Class<?>[]) inputStream.readObject();
             Object[] args = (Object[]) inputStream.readObject();
-            Method method = serviceSkeleton.getClass().getMethod(methodName, paramTypes);
+            Method method = serviceSkeleton.getApiClass().getMethod(methodName, paramTypes);
             Object result = method.invoke(serviceSkeleton.getService(), args);
             outputStream.writeObject(result);
         } catch (IOException e) {

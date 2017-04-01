@@ -26,15 +26,13 @@ public class RpcClient {
             RPCHolder rpcHolder = (RPCHolder) request;
             Socket socket = new Socket(host, port);
             ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-            outputStream.writeUTF(rpcHolder.getAppName());
+            outputStream.writeUTF(rpcHolder.getServiceName());
             outputStream.writeUTF(rpcHolder.getMethodName());
-            outputStream.writeObject(rpcHolder.getReturnType());
+            outputStream.writeObject(rpcHolder.getParameterTypes());
+//            outputStream.writeObject(rpcHolder.getReturnType());
             outputStream.writeObject(rpcHolder.getArgs());
             ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
             Object result = inputStream.readObject();
-            System.out.println(result);
-//            if (result instanceof Throwable)
-//                throw (Throwable) result;
             if (result != null) {
                 rpcHolder.setResult(result);
             }

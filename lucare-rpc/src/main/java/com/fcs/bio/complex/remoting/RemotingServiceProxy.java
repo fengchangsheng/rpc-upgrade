@@ -3,11 +3,8 @@ package com.fcs.bio.complex.remoting;
 import com.fcs.bio.complex.client.RpcClient;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.net.Socket;
 
 /**
  * Created by Lucare.Feng on 2017/3/17.
@@ -42,6 +39,7 @@ public class RemotingServiceProxy implements InvocationHandler {
         ticket.setAppName(locator.getAppName()) ;
         ticket.setServiceName(locator.getServiceName()) ;
         ticket.setMethodName(method.getName()) ;
+        ticket.setParameterTypes(method.getParameterTypes());
         ticket.setArgs(args) ;
         ticket.setReturnType(method.getReturnType());
         client.invoke(ticket);

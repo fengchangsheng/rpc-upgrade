@@ -1,5 +1,6 @@
 package com.fcs;
 
+import com.fcs.bio.complex.remoting.ServiceFactory;
 import com.fcs.bio.complex.remoting.ServiceLocator;
 import com.fcs.bio.complex.server.contexts.ServiceSkeleton;
 import com.fcs.demo.HelloService;
@@ -12,8 +13,9 @@ public class ComplexTest {
 
     public static void main(String[] args) {
         try {
-            ServiceLocator locator = new ServiceLocator(HelloService.class, "HelloService", "127.0.0.1", 12345, "test");
-            HelloService helloService = (HelloService) locator.getProxy();
+//            ServiceLocator locator = new ServiceLocator(HelloService.class, "HelloService", "127.0.0.1", 12345, "test");
+//            HelloService helloService = (HelloService) locator.getProxy();
+            HelloService helloService = ServiceFactory.getService(HelloService.class);
             String res = helloService.sayHello("lucare");
             System.out.println(res);
         } catch (Exception e) {

@@ -1,0 +1,7 @@
+<remoting>
+    <business name="hello">
+        <service name="HelloService">
+            <locator>127.0.0.1:12345/test</locator>
+        </service>
+    </business>
+</remoting>

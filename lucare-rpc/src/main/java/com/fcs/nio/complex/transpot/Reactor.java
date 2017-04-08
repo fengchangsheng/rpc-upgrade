@@ -4,14 +4,18 @@ import java.io.IOException;
 import java.nio.channels.*;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by Lucare.Feng on 2017/4/5.
  * http://gee.cs.oswego.edu/dl/cpjslides/nio.pdf
  */
-public class Reactor implements Runnable {
+public class Reactor extends Thread {
 
     private final Selector selector;
+    private LinkedBlockingQueue<Object[]> register = new LinkedBlockingQueue<>() ;//channel、ops、attach
+    private final AtomicBoolean wakeup = new AtomicBoolean() ;
 
     public Reactor() throws IOException {
         selector = Selector.open();
@@ -21,6 +25,8 @@ public class Reactor implements Runnable {
     public void run() {
         while (!Thread.interrupted()) {
             try {
+                wakeup.set(false);
+                processRegister();
                 selector.select();
                 Set<SelectionKey> selected = selector.selectedKeys();
                 Iterator<SelectionKey> it = selected.iterator();
@@ -34,6 +40,22 @@ public class Reactor implements Runnable {
         }
     }
 
+    private void processRegister() {
+        Object[] object;
+        while ((object = this.register.poll()) != null) {
+            try {
+                SelectableChannel channel = (SelectableChannel) object[0];
+                if (!channel.isOpen())
+                    continue;
+                int ops = ((Integer) object[1]).intValue();
+                Object attachment = object[2];
+                channel.register(this.selector, ops, attachment);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void dispatch(SelectionKey next) {
         Runnable r = (Runnable) next.attachment();
         if (r != null) {
@@ -42,9 +64,18 @@ public class Reactor implements Runnable {
     }
 
     public void registerChannel(SelectableChannel channel, int ops) throws IOException {
+        ServerSocketChannel serverChannel = null;
         if (channel instanceof ServerSocketChannel) {
-            ServerSocketChannel socketChannel = (ServerSocketChannel) channel;
-            channel.register(selector, ops, new Acceptor(socketChannel, selector));
+            serverChannel = (ServerSocketChannel) channel;
+        }
+        Object attachment = new Acceptor(serverChannel, selector);
+        if (this == Thread.currentThread()) {
+            serverChannel.register(selector, ops, attachment);
+        } else {
+            this.register.offer(new Object[]{ channel, ops, attachment });
+            if (wakeup.compareAndSet(false, true)) {
+                this.selector.wakeup();
+            }
         }
     }
 }

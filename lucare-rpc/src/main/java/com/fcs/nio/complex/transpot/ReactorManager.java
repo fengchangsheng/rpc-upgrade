@@ -15,7 +15,7 @@ public class ReactorManager {
     public synchronized void start() throws IOException {
         if (!started) {
             reactor = new Reactor();
-            new Thread(reactor).start();
+            reactor.start();
             started = true;
         }
     }

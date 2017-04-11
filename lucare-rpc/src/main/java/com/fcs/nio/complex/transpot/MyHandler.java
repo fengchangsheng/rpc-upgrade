@@ -2,12 +2,11 @@ package com.fcs.nio.complex.transpot;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.fcs.bio.complex.server.contexts.AppContext;
 import com.fcs.bio.complex.server.contexts.AppContextManager;
 import com.fcs.bio.complex.server.contexts.ServiceSkeleton;
 import com.fcs.nio.complex.SendDTO;
-import com.fcs.nio.util.ByteUtil;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -60,14 +59,14 @@ public class MyHandler implements Runnable {
         while (true) {
             int readBytes = socketChannel.read(byteBuffer);
             if (readBytes != -1) {
-//                SendDTO sendDTO = (SendDTO) ByteUtil.getObject(byteBuffer.array());//java 序列化
                 byte[] in = byteBuffer.array();
-                SendDTO sendDTO = JSON.parseObject(in, SendDTO.class);
-//                Object[] params = JSON.parseObject(in, Object[].class);
-//                SendDTO sendDTO = arrayToObjects(params);
+                Object[] params = JSON.parseObject(in, Object[].class);
+                SendDTO sendDTO = arrayToObjects(params);
                 Object result = process(sendDTO);
                 byteBuffer.flip();
-                socketChannel.write(ByteBuffer.wrap(ByteUtil.getBytes(result)));
+                byte[] data = JSON.toJSONBytes(result, SerializerFeature.WriteClassName, SerializerFeature.WriteDateUseDateFormat);
+                System.out.println(data.length);
+                socketChannel.write(ByteBuffer.wrap(data));
                 break;
             }
         }
@@ -100,8 +99,9 @@ public class MyHandler implements Runnable {
         String methodName = (String) params[1];
         JSONArray typeArray = (JSONArray) params[2];
         Class<?>[] paramTypes = new Class<?>[typeArray.size()];
+        paramTypes[0] = java.lang.String.class;
         for (int index = 0; index < typeArray.size(); index++) {
-            paramTypes[index] = (Class<?>) typeArray.get(index);
+            paramTypes[index] = typeArray.get(index).getClass();
         }
         JSONArray array = (JSONArray) params[3];
         Object[] args = new Object[array.size()];

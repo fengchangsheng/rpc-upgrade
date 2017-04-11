@@ -1,10 +1,13 @@
 package com.fcs.nio.complex.transpot;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.fcs.bio.complex.server.contexts.AppContext;
 import com.fcs.bio.complex.server.contexts.AppContextManager;
 import com.fcs.bio.complex.server.contexts.ServiceSkeleton;
 import com.fcs.nio.complex.SendDTO;
 import com.fcs.nio.util.ByteUtil;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,7 +28,7 @@ public class MyHandler implements Runnable {
     static final int READING = 0, SENDING = 1;
     int state = READING;
 
-    public MyHandler(Selector selector,SocketChannel socketChannel) throws IOException {
+    public MyHandler(Selector selector, SocketChannel socketChannel) throws IOException {
         socket = socketChannel;
         socketChannel.configureBlocking(false);
         sk = socket.register(selector, 0);
@@ -37,7 +40,7 @@ public class MyHandler implements Runnable {
 
     @Override
     public void run() {
-        if (state == READING){
+        if (state == READING) {
             try {
                 read();
             } catch (IOException e) {
@@ -45,7 +48,7 @@ public class MyHandler implements Runnable {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-        }else if (state == SENDING) {
+        } else if (state == SENDING) {
             send();
         }
     }
@@ -57,8 +60,11 @@ public class MyHandler implements Runnable {
         while (true) {
             int readBytes = socketChannel.read(byteBuffer);
             if (readBytes != -1) {
-                SendDTO sendDTO = (SendDTO) ByteUtil.getObject(byteBuffer.array());
-                System.out.println(sendDTO.getMethodName());
+//                SendDTO sendDTO = (SendDTO) ByteUtil.getObject(byteBuffer.array());//java 序列化
+                byte[] in = byteBuffer.array();
+                SendDTO sendDTO = JSON.parseObject(in, SendDTO.class);
+//                Object[] params = JSON.parseObject(in, Object[].class);
+//                SendDTO sendDTO = arrayToObjects(params);
                 Object result = process(sendDTO);
                 byteBuffer.flip();
                 socketChannel.write(ByteBuffer.wrap(ByteUtil.getBytes(result)));
@@ -70,7 +76,7 @@ public class MyHandler implements Runnable {
         socketChannel.close();
     }
 
-    private Object process(SendDTO sendDTO){
+    private Object process(SendDTO sendDTO) {
         AppContext appContext = AppContextManager.getAppContextImpl("test");
         ServiceSkeleton serviceSkeleton = appContext.getServiceSkeleton(sendDTO.getServiceName());
         Object service = serviceSkeleton.getService();
@@ -89,7 +95,23 @@ public class MyHandler implements Runnable {
         return result;
     }
 
-    private void send(){
+    private SendDTO arrayToObjects(Object[] params) {
+        String serviceName = (String) params[0];
+        String methodName = (String) params[1];
+        JSONArray typeArray = (JSONArray) params[2];
+        Class<?>[] paramTypes = new Class<?>[typeArray.size()];
+        for (int index = 0; index < typeArray.size(); index++) {
+            paramTypes[index] = (Class<?>) typeArray.get(index);
+        }
+        JSONArray array = (JSONArray) params[3];
+        Object[] args = new Object[array.size()];
+        for (int index = 0; index < array.size(); index++) {
+            args[index] = array.get(index);
+        }
+        return new SendDTO(serviceName, methodName, paramTypes, args);
+    }
+
+    private void send() {
         System.out.println("this is send ");
     }
 

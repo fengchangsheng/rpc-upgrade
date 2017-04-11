@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * Created by Lucare.Feng on 2017/4/7.
+ * 使用Json序列化时不需要实现序列化接口
  */
 public class SendDTO implements Serializable{
 
@@ -11,6 +12,9 @@ public class SendDTO implements Serializable{
     private String methodName;
     private Class<?>[] paramTypes;
     private Object[] agrs;
+
+    public SendDTO() {
+    }
 
     public SendDTO(String serviceName, String methodName, Class<?>[] paramTypes, Object[] agrs) {
         this.serviceName = serviceName;

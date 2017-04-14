@@ -21,6 +21,9 @@ public class NIOServiceFactory {
         load();
     }
 
+    /**
+     * 初始化load  加载配置文件
+     */
     public static void load() {
         InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("remoting.xml");
         if (is != null) {
@@ -45,6 +48,9 @@ public class NIOServiceFactory {
         }
     }
 
+    /**
+     * 获取service的方法 (客户端调用的入口)
+     */
     public static <T> T getService(Class<T> api) {
         try {
             return (T) foundLocator(api).getProxy();
@@ -56,6 +62,10 @@ public class NIOServiceFactory {
         return null;
     }
 
+    /**
+     * 根据api的class信息   查找ServiceLocator(service元信息)
+     * 如果缓存没有则创建
+     */
     public static <T> NIOServiceLocator<T> foundLocator(Class<T> api) throws IOException, InterruptedException {
         String key = "locator-config-" + api.getName();
         String serviceName = api.getSimpleName();

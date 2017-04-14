@@ -46,6 +46,12 @@ public class MyHandler implements Runnable {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
+            }finally {
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         } else if (state == SENDING) {
             send();

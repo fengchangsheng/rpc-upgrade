@@ -1,12 +1,12 @@
 package com.fcs.nio.complex.transpot;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.fcs.bio.complex.remoting.RPCHolder;
 import com.fcs.bio.complex.server.contexts.AppContext;
 import com.fcs.bio.complex.server.contexts.AppContextManager;
 import com.fcs.bio.complex.server.contexts.ServiceSkeleton;
-import com.fcs.nio.complex.SendDTO;
+import com.fcs.nio.complex.codec.CodecHelper;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -59,18 +59,16 @@ public class MyHandler implements Runnable {
     }
 
     private void read() throws IOException, ClassNotFoundException {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(512);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
         SocketChannel socketChannel = (SocketChannel) sk.channel();
 
         while (true) {
             int readBytes = socketChannel.read(byteBuffer);
             if (readBytes != -1) {
-                byte[] in = byteBuffer.array();
-                Object[] params = JSON.parseObject(in, Object[].class);
-                SendDTO sendDTO = arrayToObjects(params);
-                Object result = process(sendDTO);
                 byteBuffer.flip();
-                byte[] data = JSON.toJSONBytes(result, SerializerFeature.WriteClassName, SerializerFeature.WriteDateUseDateFormat);
+                RPCHolder holder = CodecHelper.decodeRequest(byteBuffer);
+                Object object = process(holder);
+                byte[] data = JSON.toJSONBytes(object, SerializerFeature.WriteClassName, SerializerFeature.WriteDateUseDateFormat);
                 System.out.println(data.length);
                 socketChannel.write(ByteBuffer.wrap(data));
                 break;
@@ -81,15 +79,15 @@ public class MyHandler implements Runnable {
         socketChannel.close();
     }
 
-    private Object process(SendDTO sendDTO) {
+    private Object process(RPCHolder holder) {
         AppContext appContext = AppContextManager.getAppContextImpl("test");
-        ServiceSkeleton serviceSkeleton = appContext.getServiceSkeleton(sendDTO.getServiceName());
+        ServiceSkeleton serviceSkeleton = appContext.getServiceSkeleton(holder.getServiceName());
         Object service = serviceSkeleton.getService();
         final Class clazz = service.getClass();
         Object result = null;
         try {
-            Method method = clazz.getMethod(sendDTO.getMethodName(), sendDTO.getParamTypes());
-            result = method.invoke(service, sendDTO.getAgrs());
+            Method method = clazz.getMethod(holder.getMethodName(), holder.getParameterTypes());
+            result = method.invoke(service, holder.getArgs());
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
@@ -98,23 +96,6 @@ public class MyHandler implements Runnable {
             e.printStackTrace();
         }
         return result;
-    }
-
-    private SendDTO arrayToObjects(Object[] params) {
-        String serviceName = (String) params[0];
-        String methodName = (String) params[1];
-        JSONArray typeArray = (JSONArray) params[2];
-        Class<?>[] paramTypes = new Class<?>[typeArray.size()];
-        paramTypes[0] = java.lang.String.class;
-        for (int index = 0; index < typeArray.size(); index++) {
-            paramTypes[index] = typeArray.get(index).getClass();
-        }
-        JSONArray array = (JSONArray) params[3];
-        Object[] args = new Object[array.size()];
-        for (int index = 0; index < array.size(); index++) {
-            args[index] = array.get(index);
-        }
-        return new SendDTO(serviceName, methodName, paramTypes, args);
     }
 
     private void send() {

@@ -1,8 +1,8 @@
 package com.fcs.nio.complex.client;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.fcs.bio.complex.remoting.RPCHolder;
+import com.fcs.nio.complex.codec.CodecHelper;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -42,20 +42,9 @@ public class NIORpcClient {
     }
 
     public void write(RPCHolder rpcHolder) throws IOException {
-        String serviceName = rpcHolder.getServiceName();
-        String methodName = rpcHolder.getMethodName();
-        Class<?>[] paramType = rpcHolder.getParameterTypes();
-        Object[] args = rpcHolder.getArgs();
-        Object[] parameters = new Object[4] ;//使用对象数组传输的字节数是Java序列化的1/6  是json序列化的1/3
-        parameters[0] = serviceName;
-        parameters[1] = methodName;
-        parameters[2] = paramType;
-        parameters[3] = args;
-        byte[] data = JSON.toJSONBytes(parameters, SerializerFeature.WriteClassName, SerializerFeature.WriteDateUseDateFormat);
-//            byteBuffer.put(data);
-//            byteBuffer.flip();
-//            socketChannel.write(byteBuffer);
-        socketChannel.write(ByteBuffer.wrap(data));
+        ByteBuffer buffer = CodecHelper.encodeRequest(rpcHolder);
+        buffer.flip();
+        socketChannel.write(buffer);
     }
 
     public void read(RPCHolder rpcHolder) throws IOException {

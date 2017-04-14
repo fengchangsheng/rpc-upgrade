@@ -10,8 +10,8 @@ import com.fcs.util.ConcurrentUtil;
 public class NIOComplexTest {
 
     public static void main(String[] args) {
-//        singleTest();
-        moreThreadTest();  //一开就挂了  哈哈
+        singleTest();
+//        moreThreadTest();  //一开就挂了  哈哈
 //        concurrentTest();
     }
 

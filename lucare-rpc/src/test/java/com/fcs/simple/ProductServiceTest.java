@@ -1,0 +1,32 @@
+package com.fcs.simple;
+
+import com.fcs.bio.simple.RpcServiceFactory;
+import com.fcs.demo.HelloService;
+import com.fcs.demo.impl.HelloServiceImpl;
+import com.fcs.netty.EchoServer;
+import com.fcs.nio.simple.NIORpcServiceFactory;
+
+/**
+ * Created by Lucare.Feng on 2017/3/18.
+ * 暴露接口来启动simple 服务端
+ */
+public class ProductServiceTest {
+
+    public static void main(String[] args) {
+        HelloService helloService = new HelloServiceImpl();
+        RpcServiceFactory.expose(helloService,1234);
+        try {
+            NIORpcServiceFactory.expose(helloService, 1234);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+//        try {
+//            new EchoServer(1588).start();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+    }
+}

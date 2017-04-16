@@ -18,16 +18,15 @@ import java.nio.channels.SocketChannel;
 /**
  * Created by Lucare.Feng on 2017/4/5.
  */
-public class MyHandler implements Runnable {
+public class Handler implements Runnable {
 
     final SocketChannel socket;
     final SelectionKey sk;
-    ByteBuffer input = ByteBuffer.allocate(512);
-    ByteBuffer output = ByteBuffer.allocate(512);
     static final int READING = 0, SENDING = 1;
     int state = READING;
+    byte[] data = null;
 
-    public MyHandler(Selector selector, SocketChannel socketChannel) throws IOException {
+    public Handler(Selector selector, SocketChannel socketChannel) throws IOException {
         socket = socketChannel;
         socketChannel.configureBlocking(false);
         sk = socket.register(selector, 0);
@@ -39,44 +38,40 @@ public class MyHandler implements Runnable {
 
     @Override
     public void run() {
-        if (state == READING) {
-            try {
+        try {
+            if (state == READING) {
                 read();
+            } else if (state == SENDING) {
+                send();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }finally {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
-        } else if (state == SENDING) {
-            send();
         }
     }
 
     private void read() throws IOException, ClassNotFoundException {
         ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-        SocketChannel socketChannel = (SocketChannel) sk.channel();
-
         while (true) {
-            int readBytes = socketChannel.read(byteBuffer);
+            int readBytes = socket.read(byteBuffer);
             if (readBytes != -1) {
                 byteBuffer.flip();
                 RPCHolder holder = CodecHelper.decodeRequest(byteBuffer);
                 Object object = process(holder);
-                byte[] data = JSON.toJSONBytes(object, SerializerFeature.WriteClassName, SerializerFeature.WriteDateUseDateFormat);
-                System.out.println(data.length);
-                socketChannel.write(ByteBuffer.wrap(data));
+                data = JSON.toJSONBytes(object, SerializerFeature.WriteClassName, SerializerFeature.WriteDateUseDateFormat);
                 break;
             }
         }
-//        state = SENDING;
-//        sk.interestOps(SelectionKey.OP_WRITE);
-        socketChannel.close();
+        state = SENDING;
+        sk.interestOps(SelectionKey.OP_WRITE);
+        sk.selector().wakeup();
     }
 
     private Object process(RPCHolder holder) {
@@ -98,8 +93,9 @@ public class MyHandler implements Runnable {
         return result;
     }
 
-    private void send() {
-        System.out.println("this is send ");
+    private void send() throws IOException {
+        socket.write(ByteBuffer.wrap(data));
+//        sk.cancel();
     }
 
 }

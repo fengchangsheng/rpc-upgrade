@@ -1,4 +1,4 @@
-package com.fcs;
+package com.fcs.simple;
 
 import com.fcs.bio.simple.RpcServiceFactory;
 import com.fcs.demo.HelloService;
@@ -7,26 +7,19 @@ import com.fcs.netty.EchoClient;
 import com.fcs.nio.simple.NIORpcServiceFactory;
 import junit.framework.TestCase;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Unit test for simple App.
  */
 public class AppTest extends TestCase {
 
-    @Override
-    protected void setUp() throws Exception {
-
-
-    }
-    @Override
-    protected void tearDown() throws Exception {
-
-    }
-
     public void testForSimple(){
         HelloService helloService = RpcServiceFactory.getservice(HelloService.class);
-        helloService.sayHello("lucare");
+        String strt = helloService.sayHello("lucare");
+        System.out.println(strt);
     }
-
 
     public void testForNIOSimple(){
         for(int i= 0;i<10;i++) {

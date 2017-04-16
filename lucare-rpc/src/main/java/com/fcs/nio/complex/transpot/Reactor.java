@@ -69,6 +69,7 @@ public class Reactor extends Thread {
             serverChannel = (ServerSocketChannel) channel;
         }
         Object attachment = new Acceptor(serverChannel, selector);
+        //必须在当前线程里注册  否则会出现注册失败的现象
         if (this == Thread.currentThread()) {
             serverChannel.register(selector, ops, attachment);
         } else {

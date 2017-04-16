@@ -6,12 +6,13 @@ import com.fcs.util.ConcurrentUtil;
 
 /**
  * Created by Lucare.Feng on 2017/4/7.
+ * NIO complex 客户端测试（服务端直接启动-NIOServerBootrap）
  */
 public class NIOComplexTest {
 
     public static void main(String[] args) {
-        singleTest();
-//        moreThreadTest();  //一开就挂了  哈哈
+//        singleTest();
+        moreThreadTest();  //加上sk.cancel()或者socket.close()一开就挂了 是否需要关闭？何时关闭？需要session?
 //        concurrentTest();
     }
 

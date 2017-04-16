@@ -8,6 +8,7 @@ import com.fcs.demo.HelloService;
 
 /**
  * Created by Lucare.Feng on 2017/3/29.
+ * bio complex 客户端测试 （服务端直接在complex包中启动）
  */
 public class ComplexTest {
 

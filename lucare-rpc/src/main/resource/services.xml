@@ -7,8 +7,8 @@
 	<!--</filters>-->
 
 	<service name="HelloService">
-		<home-api>com.fcs.demo.HelloService</home-api>
-		<home-class>com.fcs.demo.impl.HelloServiceImpl</home-class>
+		<home-api>com.fcs.service.HelloService</home-api>
+		<home-class>com.fcs.service.impl.HelloServiceImpl</home-class>
 	</service>
 
 </services>

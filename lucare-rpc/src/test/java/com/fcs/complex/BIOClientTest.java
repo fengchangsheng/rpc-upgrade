@@ -1,16 +1,14 @@
-package com.fcs;
+package com.fcs.complex;
 
 import com.fcs.bio.complex.remoting.ServiceFactory;
-import com.fcs.bio.complex.remoting.ServiceLocator;
-import com.fcs.bio.complex.server.contexts.ServiceSkeleton;
-import com.fcs.demo.HelloService;
+import com.fcs.service.HelloService;
 
 
 /**
  * Created by Lucare.Feng on 2017/3/29.
- * bio complex 客户端测试 （服务端直接在complex包中启动）
+ * bio complex 客户端测试 （服务端直接在complex包中启动-ServerBootrap）
  */
-public class ComplexTest {
+public class BIOClientTest {
 
     public static void main(String[] args) {
         try {

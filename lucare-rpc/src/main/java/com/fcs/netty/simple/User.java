@@ -1,4 +1,4 @@
-package com.fcs.netty;
+package com.fcs.netty.simple;
 
 import java.io.Serializable;
 

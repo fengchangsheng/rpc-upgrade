@@ -1,19 +1,15 @@
 package com.fcs.simple;
 
 import com.fcs.bio.simple.RpcServiceFactory;
-import com.fcs.demo.HelloService;
-import com.fcs.demo.impl.HelloServiceImpl;
-import com.fcs.netty.EchoClient;
+import com.fcs.service.HelloService;
+import com.fcs.netty.simple.EchoClient;
 import com.fcs.nio.simple.NIORpcServiceFactory;
 import junit.framework.TestCase;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Unit test for simple App.
+ * simple client all .
  */
-public class AppTest extends TestCase {
+public class ClientTest extends TestCase {
 
     public void testForSimple(){
         HelloService helloService = RpcServiceFactory.getservice(HelloService.class);

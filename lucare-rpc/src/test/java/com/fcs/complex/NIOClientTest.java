@@ -1,6 +1,6 @@
-package com.fcs;
+package com.fcs.complex;
 
-import com.fcs.demo.HelloService;
+import com.fcs.service.HelloService;
 import com.fcs.nio.complex.remoting.NIOServiceFactory;
 import com.fcs.util.ConcurrentUtil;
 
@@ -8,11 +8,11 @@ import com.fcs.util.ConcurrentUtil;
  * Created by Lucare.Feng on 2017/4/7.
  * NIO complex 客户端测试（服务端直接启动-NIOServerBootrap）
  */
-public class NIOComplexTest {
+public class NIOClientTest {
 
     public static void main(String[] args) {
-//        singleTest();
-        moreThreadTest();  //加上sk.cancel()或者socket.close()一开就挂了 是否需要关闭？何时关闭？需要session?
+        singleTest();
+//        moreThreadTest();  //加上sk.cancel()或者socket.close()一开就挂了 是否需要关闭？何时关闭？需要session?
 //        concurrentTest();
     }
 

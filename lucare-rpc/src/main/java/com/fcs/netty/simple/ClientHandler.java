@@ -1,4 +1,4 @@
-package com.fcs.netty;
+package com.fcs.netty.simple;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

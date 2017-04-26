@@ -46,14 +46,10 @@ public class Handler implements Runnable {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            close();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            close();
         }
     }
 
@@ -66,6 +62,7 @@ public class Handler implements Runnable {
                 RPCHolder holder = CodecHelper.decodeRequest(byteBuffer);
                 Object object = process(holder);
                 data = JSON.toJSONBytes(object, SerializerFeature.WriteClassName, SerializerFeature.WriteDateUseDateFormat);
+                System.out.println(data.length);
                 break;
             }
         }
@@ -94,8 +91,17 @@ public class Handler implements Runnable {
     }
 
     private void send() throws IOException {
+        System.out.println("send is invoke.");
         socket.write(ByteBuffer.wrap(data));
-//        sk.cancel();
+        sk.cancel();
+    }
+
+    private void close(){
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -1,4 +1,4 @@
-package com.fcs.demo;
+package com.fcs.service;
 
 /**
  * Created by Lucare.Feng on 2017/3/17.

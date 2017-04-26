@@ -1,6 +1,6 @@
-package com.fcs.demo.impl;
+package com.fcs.service.impl;
 
-import com.fcs.demo.HelloService;
+import com.fcs.service.HelloService;
 
 /**
  * Created by Lucare.Feng on 2017/3/17.

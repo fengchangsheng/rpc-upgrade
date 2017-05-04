@@ -17,8 +17,6 @@ public class NIORpcClient {
 
     private int port;
 
-    private SocketChannel socketChannel;
-
     public NIORpcClient(String host, int port) {
         this.host = host;
         this.port = port;
@@ -27,28 +25,26 @@ public class NIORpcClient {
     public void invoke(Object request) throws IOException, ClassNotFoundException {
         if (request instanceof RPCHolder) {
             RPCHolder rpcHolder = (RPCHolder) request;
-            connect();
-            write(rpcHolder);
-            read(rpcHolder);
+            SocketChannel socketChannel = connect();
+            write(rpcHolder,socketChannel);
+            read(rpcHolder,socketChannel);
         }
     }
 
-    public void connect() throws IOException {
+    public SocketChannel connect() throws IOException {
         InetSocketAddress inetSocketAddress = new InetSocketAddress(host, port);
-        socketChannel = SocketChannel.open(inetSocketAddress);
-        System.out.println("who is "+socketChannel.isConnected()+"   "+Thread.currentThread().getName());
+        SocketChannel socketChannel = SocketChannel.open(inetSocketAddress);
         socketChannel.configureBlocking(false);
-        System.out.println("has come on...."+Thread.currentThread().getName());
+        return socketChannel;
     }
 
-    public void write(RPCHolder rpcHolder) throws IOException {
+    public void write(RPCHolder rpcHolder,SocketChannel socketChannel) throws IOException {
         ByteBuffer buffer = CodecHelper.encodeRequest(rpcHolder);
         buffer.flip();
         socketChannel.write(buffer);
     }
 
-    public void read(RPCHolder rpcHolder) throws IOException {
-        System.out.println("read......"+ Thread.currentThread().getName());
+    public void read(RPCHolder rpcHolder,SocketChannel socketChannel) throws IOException {
         ByteBuffer byteBuffer = ByteBuffer.allocate(512);
         Object result;
         while (true) {
@@ -57,7 +53,6 @@ public class NIORpcClient {
             if (readBytes > 0) {
                 byte[] in = byteBuffer.array();
                 result = JSON.parseObject(in, Object.class);
-                System.out.println("Client: data = " + result+ "  "+Thread.currentThread().getName());
                 socketChannel.close();
                 break;
             }

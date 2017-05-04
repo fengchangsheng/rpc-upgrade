@@ -12,7 +12,7 @@ public class NIOClientTest {
 
     public static void main(String[] args) {
         singleTest();
-//        moreThreadTest();  //加上sk.cancel()或者socket.close()一开就挂了 是否需要关闭？何时关闭？需要session?
+//        moreThreadTest();  //需要session?
 //        concurrentTest();
     }
 
